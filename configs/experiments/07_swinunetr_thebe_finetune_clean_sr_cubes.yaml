@@ -1,0 +1,44 @@
+recipe: swinunetr_thebe_finetune_clean_sr_cubes
+notebook: 07_swinunetr_thebe_finetune_clean_sr_cubes.ipynb
+stage: thebe_finetune
+dataset: thebe_clean_sr
+model_variant: swin_tiny
+loss_profile: thebe_combined_sym
+augmentation_profile: thebe_random_crop
+trainer_profile: thebe_finetune
+data:
+  thebe_dir: data/thebe
+  faultseg3d_dir: data/faultseg3d
+  train_seis: data/thebe/clean_sr/thebe_train_seis.npz
+  train_fault: data/thebe/clean_sr/thebe_train_fault.npz
+  val_seis: data/thebe/clean_sr/thebe_val_seis.npz
+  val_fault: data/thebe/clean_sr/thebe_val_fault.npz
+  test_seis: data/thebe/thebe_test_seis.npz
+  test_fault: data/thebe/thebe_test_fault.npz
+  faultseg3d_train_seis_dir: data/faultseg3d/train/seis
+  faultseg3d_train_fault_dir: data/faultseg3d/train/fault
+  faultseg3d_val_seis_dir: data/faultseg3d/validation/seis
+  faultseg3d_val_fault_dir: data/faultseg3d/validation/fault
+  faultseg3d_shape: [128, 128, 128]
+  faultseg3d_dtype: float32
+checkpoints:
+  input: ""
+  segmentation_input: ""
+  sr_input: ""
+  output_dir: checkpoints/swinunetr_thebe_finetune_clean_sr_cubes
+  best: checkpoints/swinunetr_thebe_finetune_clean_sr_cubes/best_model.pth
+  latest: checkpoints/swinunetr_thebe_finetune_clean_sr_cubes/latest_checkpoint.pth
+outputs:
+  output_dir: outputs/swinunetr_thebe_finetune_clean_sr_cubes
+training:
+  roi_size: [128, 128, 128]
+  patch_size: [128, 128, 128]
+  batch_size: 1
+  learning_rate: 0.0001
+  max_epochs: 100
+  amp: true
+  accumulation_steps: 1
+  threshold: 0.5
+  overlap: 0.5
+  num_workers: 2
+  seed: 42

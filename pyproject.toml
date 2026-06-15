@@ -1,0 +1,61 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "seismic-fault-recognition"
+version = "0.1.0"
+description = "Reusable code and notebooks for 3D seismic fault segmentation experiments."
+requires-python = ">=3.10"
+dependencies = [
+  "numpy",
+]
+
+[project.optional-dependencies]
+train = [
+  "clearml",
+  "einops",
+  "monai",
+  "pyyaml",
+  "scipy",
+  "torch",
+  "torchvision",
+  "tqdm",
+]
+preprocess = [
+  "dask",
+  "h5py",
+  "matplotlib",
+  "scipy",
+  "segyio",
+  "tqdm",
+  "xarray",
+  "zarr",
+]
+server = [
+  "fastapi",
+  "uvicorn",
+  "pydantic",
+  "python-multipart",
+  "redis",
+  "celery",
+]
+ui = [
+  "streamlit",
+  "requests",
+  "pillow",
+]
+notebook = [
+  "jupyter",
+  "matplotlib",
+  "plotly",
+]
+dev = [
+  "nbconvert",
+]
+
+[project.scripts]
+sfr = "seismic_fault_recognition.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]

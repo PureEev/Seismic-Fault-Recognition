@@ -1,0 +1,12 @@
+numpy
+pyyaml
+torch
+torchvision
+monai
+einops
+clearml
+scipy
+plotly
+tqdm
+matplotlib
+jupyter

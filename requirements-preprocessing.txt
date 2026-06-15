@@ -1,0 +1,9 @@
+numpy
+scipy
+h5py
+segyio
+zarr
+xarray
+dask
+tqdm
+matplotlib

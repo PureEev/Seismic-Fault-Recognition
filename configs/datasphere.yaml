@@ -1,0 +1,46 @@
+runtime:
+  name: datasphere
+  device: cuda
+  num_workers: 2
+  seed: 42
+
+paths:
+  project_root: /home/jupyter/project
+  thebe_dir: /home/jupyter/project/Thebe
+  faultseg3d_dir: /home/jupyter/project/FaultSeg3D
+  sr_dir: /home/jupyter/project/SeisGAN_Results
+  checkpoint_dir: /home/jupyter/project/checkpoints
+  output_dir: /home/jupyter/project/outputs
+  test_seis: /home/jupyter/project/Thebe/thebe_test_seis.npz
+  test_fault: /home/jupyter/project/Thebe/thebe_test_fault.npz
+
+clearml:
+  enabled: true
+  web_host: https://app.clear.ml
+  project_name: Seismic_Fault_Segmentation
+  pretraining_project_name: Seismic_Pretraining
+  segmentation_project_name: Seismic_Fault_Segmentation
+  sr_project_name: Seismic_Super_Resolution
+  output_uri: ""
+
+training:
+  roi_size: [128, 128, 128]
+  patch_size: [128, 128, 128]
+  batch_size: 1
+  learning_rate: 0.0001
+  max_epochs: 100
+  threshold: 0.5
+  overlap: 0.5
+
+validation:
+  thresholds: [0.3, 0.4, 0.5, 0.6, 0.7]
+  primary_metric: val_dice_best_threshold
+  checkpoint_strict: true
+  sr_metric_normalization: dataset_stats
+  sr_data_range: [-3.0, 3.0]
+
+reproducibility:
+  seed: 42
+  deterministic: true
+  benchmark: false
+  num_workers: 2

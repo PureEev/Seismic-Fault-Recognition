@@ -1,47 +1,160 @@
-# OmniSeis 3D: Seismic Fault Segmentation
+# Seismic Fault Recognition
 
-![PyTorch](https://img.shields.io/badge/PyTorch-%23EE4C2C.svg?style=flat&logo=PyTorch&logoColor=white)
-![MONAI](https://img.shields.io/badge/MONAI-Medical%20AI-blue)
-![ClearML](https://img.shields.io/badge/ClearML-Experiment%20Tracking-0f172a)
+Исследовательский Python-проект для сегментации разломов в 3D-сейсмических
+данных, self-supervised pretraining, super-resolution и воспроизводимой
+валидации моделей.
 
-**OmniSeis 3D** — это архитектура глубокого обучения для 3D-сегментации разломов на сейсмических кубах. Проект исследует границы классических подходов и предлагает многодоменный анализ (пространство, частота, время/глубина) с механизмами кросс-внимания.
+Основная логика находится в `src/seismic_fault_recognition`, а ноутбуки из
+`notebooks/` являются тонкими сценариями экспериментов поверх общего package
+API и YAML-конфигураций.
 
-## 🏗 Две исследуемые архитектуры
+## Текущий контракт
 
-В рамках данного проекта разработаны и протестированы две ключевые нейросетевые модели:
+- Все основные 3D-пайплайны принимают кубы размером `128 x 128 x 128`.
+- Финальная Swin-модель зарегистрирована под единственным именем `swin_tiny`.
+- `swin_tiny` использует ширины `48 -> 96 -> 192` и patch projection
+  `Conv3d(kernel_size=5, stride=2, padding=2)`.
+- Данные, checkpoint-файлы и результаты запусков не хранятся в Git.
+- ClearML поддерживается опционально и может быть отключён в
+  `configs/datasphere.yaml`.
 
-1. **SwinUNETR Tiny (Robust Baseline):**
-   Специально облегченная версия классического иерархического трансформера от MONAI.
-   * **Особенности:** Использует исключительно пространственный контекст. Отличается способностью к генерализации на сильно зашумленных реальных данных.
+## Структура репозитория
 
-2. **OmniSeis (Advanced Multi-Domain Model):**
-   Тяжелая исследовательская архитектура, оборачивающая `SwinUNETR Tiny` в многодоменный экстрактор признаков.
-   * **Особенности:** Вместо анализа только 3D-пространства, модель дополнительно раскладывает данные в частотный спектр (3D FFT). 
+```text
+configs/                         общие и experiment-specific YAML
+docs/                            архитектура, данные, CLI и публикация
+notebooks/                       17 финальных Jupyter-ноутбуков
+scripts/validate_notebooks.py    локальный smoke-runner ноутбуков
+src/seismic_fault_recognition/   модели, датасеты, training и validation
+tests/                           unit и integration tests
+```
 
-## 🌟 Ключевые особенности OmniSeis 3D (Key Features)
+Рекомендуемый состав GitHub-публикации и точные команды подготовки индекса
+описаны в [docs/github_publication.md](docs/github_publication.md).
 
-Архитектура использует `OmniSeisEncoder` для обогащения признаков:
-* **SAB (Spatial Aggregation Block):** Извлечение локальной геометрии.
-* **FAB (Frequency Aggregation Block):** Обработка в частотной области (3D FFT) для выявления глобальной периодичности и паттернов напластований.
-* **TAB (Temporal Attention Block):** 3D Self-Attention по оси глубины/времени (Z-axis) для отслеживания вертикальной связности разломов.
-* **FIM (Feature Interaction Module):** Кросс-внимание между различными доменами для слияния признаков на уровне Bottleneck.
-* **Pristine Skip Connections:** Передача в декодер только "чистых" пространственных признаков.
+## Установка
 
+Требуется Python `3.10+`. Локальная проверка выполнялась на Python `3.12`.
 
-## 🚀 Производительность и Результаты
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install --upgrade pip
+python -m pip install -e ".[train,notebook,dev]"
+```
 
-Пайплайн обучения разделен на два этапа:
-1.  **Pre-training (Претрейн):** Обучение на крупном синтетическом датасете **FaultSeg3D** для понимания базовой физики разломов.
-2.  **Fine-Tuning (Файн-тюн):** Дообучение на реальных сейсмических данных (датасет **Thebe**).
+Для preprocessing SEG-Y/HDF5 данных:
 
-### Метрики (FaultSeg3D Pre-train)
-Модель демонстрирует следующие результаты:
-* **Average Precision (AP):** `- 0.915`
-* **F1-Score:** `~0.84 - 0.88` (зависит от порога уверенности)
+```bash
+python -m pip install -e ".[preprocess]"
+```
 
-## 📂 Датасеты
+На CUDA-машине PyTorch лучше установить заранее командой с официальной
+страницы PyTorch для используемой версии CUDA.
 
-* **FaultSeg3D:** Синтетические кубы. Используются для инициализации весов и "претрейна" физики разломов.
-* **Thebe Dataset:** Реальные сейсмические данные. Интегрированы в ноутбуках `swinunetr_thebe_dataset.ipynb` и `fine_tuning_swinunetr.ipynb`. Для работы с датасетом написан алгоритм очистки кубов от паддинга.
+## Данные
 
-🔗 **Веса лучшей базовой модели (SwinUNETR Tiny) доступны по ссылке:** [Yandex Disk](https://disk.yandex.ru/d/64-vguvlMQ9ynQ)
+Данные необходимо разместить локально. Базовая ожидаемая структура:
+
+```text
+data/
+  thebe/
+    raw/
+    clean/
+    clean_sr/
+    sr/
+    thebe_train_seis.npz
+    thebe_train_fault.npz
+    thebe_val_seis.npz
+    thebe_val_fault.npz
+    thebe_test_seis.npz
+    thebe_test_fault.npz
+  faultseg3d/
+    train/seis/
+    train/fault/
+    validation/seis/
+    validation/fault/
+checkpoints/
+outputs/
+```
+
+Пути для конкретного запуска задаются в `configs/experiments/*.yaml`.
+Подробности форматов и структуры находятся в
+[docs/data_inventory.md](docs/data_inventory.md).
+
+## Запуск ноутбуков
+
+Запускайте Jupyter из корня репозитория, чтобы ноутбуки нашли `src/` и
+`configs/`:
+
+```bash
+jupyter lab
+```
+
+Рекомендуемый порядок, назначение и входы каждого ноутбука перечислены в
+[notebooks/README.md](notebooks/README.md).
+
+## Проверка проекта
+
+```bash
+python -m compileall -q src scripts tests
+python -m unittest discover -s tests -v
+sfr config validate \
+  --base configs/datasphere.yaml \
+  --experiments configs/experiments
+```
+
+На 15 июня 2026 года:
+
+- все 17 ноутбуков прошли локальную smoke-проверку;
+- в 10 обучающих ноутбуках выполнен реальный шаг
+  `forward -> loss -> backward -> optimizer.step`;
+- остальные ноутбуки выполнены полностью;
+- unit/integration suite: `35/35`.
+
+Smoke-runner использует локальные данные и не запускает полное обучение:
+
+```bash
+python scripts/validate_notebooks.py \
+  --thebe-crops /path/to/Thebe_Clean_Crops_V2 \
+  --faultseg-validation /path/to/faultseg3d/validation \
+  --swin-checkpoint /path/to/swinunetr_tiny_checkpoint.pth \
+  --keep-workdir
+```
+
+Методика проверки описана в
+[docs/notebook_validation.md](docs/notebook_validation.md).
+
+## CLI
+
+```bash
+sfr recipes list
+sfr recipes show swinunetr_thebe_finetune_raw
+sfr data audit \
+  --experiment configs/experiments/01_data_cleaning_and_audit.yaml \
+  --output outputs/data_audit/report.json
+sfr checkpoint inspect checkpoints/model.pth --json
+```
+
+Полный список команд: [docs/cli_reference.md](docs/cli_reference.md).
+
+## Экспериментальный pipeline
+
+1. SimMIM pretraining на сейсмических кубах.
+2. Supervised pretraining на FaultSeg3D.
+3. Fine-tuning на Thebe.
+4. Отдельное обучение super-resolution модели.
+5. Валидация сегментации и end-to-end SR + segmentation.
+
+Архитектура training/validation слоя описана в
+[docs/training_validation_architecture.md](docs/training_validation_architecture.md),
+а финальная Swin-модель в
+[docs/swinunetr_tiny.md](docs/swinunetr_tiny.md).
+
+## Ограничения
+
+- Полные датасеты и веса моделей не распространяются вместе с кодом.
+- Smoke-проверка подтверждает корректный старт вычислений, но не качество
+  сходимости полного обучения.
+- VGG perceptual loss может потребовать предварительно доступные веса
+  `torchvision`; в стандартном SR-конфиге `use_vgg: false`.

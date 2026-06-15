@@ -1,0 +1,79 @@
+# Python bytecode, caches and build outputs
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+build/
+dist/
+
+# Local environments
+.venv/
+venv/
+env/
+**/venv/
+
+# Jupyter and local runtime state
+.ipynb_checkpoints/
+.ipython/
+.jupyter/
+.jupyter-runtime/
+.matplotlib/
+
+# IDE and agent-local metadata
+.idea/
+.vscode/
+.agents/
+.codex/
+
+# JavaScript build and dependency outputs
+node_modules/
+**/node_modules/
+.next/
+**/.next/
+.turbo/
+
+# Environment and credentials
+.env
+.env.*
+!.env.example
+clearml.conf
+
+# Local datasets and binary seismic formats
+data/
+datasets/
+*.npz
+*.npy
+*.dat
+*.raw
+*.h5
+*.hdf5
+*.zarr
+*.sgy
+*.segy
+
+# Model and experiment artifacts
+artifacts/
+outputs/
+checkpoints/
+model/
+models/checkpoints/
+*.pth
+*.pt
+*.ckpt
+*.onnx
+*.html
+notebook-smoke-report.json
+
+# Training logs
+runs/
+wandb/
+logs/
+training_history.json
+
+# OS files
+.DS_Store
+Thumbs.db

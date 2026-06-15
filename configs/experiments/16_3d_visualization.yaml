@@ -1,0 +1,44 @@
+recipe: visualization_3d
+notebook: 16_3d_visualization.ipynb
+stage: visualization
+dataset: predictions
+model_variant: none
+loss_profile: segmentation_bce
+augmentation_profile: thebe_random_crop
+trainer_profile: segmentation_validation
+data:
+  thebe_dir: data/thebe
+  faultseg3d_dir: data/faultseg3d
+  train_seis: data/thebe/thebe_train_seis.npz
+  train_fault: data/thebe/thebe_train_fault.npz
+  val_seis: data/thebe/thebe_val_seis.npz
+  val_fault: data/thebe/thebe_val_fault.npz
+  test_seis: data/thebe/thebe_test_seis.npz
+  test_fault: data/thebe/thebe_test_fault.npz
+  faultseg3d_train_seis_dir: data/faultseg3d/train/seis
+  faultseg3d_train_fault_dir: data/faultseg3d/train/fault
+  faultseg3d_val_seis_dir: data/faultseg3d/validation/seis
+  faultseg3d_val_fault_dir: data/faultseg3d/validation/fault
+  faultseg3d_shape: [128, 128, 128]
+  faultseg3d_dtype: float32
+checkpoints:
+  input: ""
+  segmentation_input: ""
+  sr_input: ""
+  output_dir: checkpoints/visualization_3d
+  best: checkpoints/visualization_3d/best_model.pth
+  latest: checkpoints/visualization_3d/latest_checkpoint.pth
+outputs:
+  output_dir: outputs/visualization_3d
+training:
+  roi_size: [128, 128, 128]
+  patch_size: [128, 128, 128]
+  batch_size: 1
+  learning_rate: 0.0001
+  max_epochs: 100
+  amp: true
+  accumulation_steps: 1
+  threshold: 0.5
+  overlap: 0.5
+  num_workers: 2
+  seed: 42

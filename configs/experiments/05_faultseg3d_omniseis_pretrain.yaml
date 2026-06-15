@@ -1,0 +1,44 @@
+recipe: faultseg3d_omniseis_pretrain
+notebook: 05_faultseg3d_omniseis_pretrain.ipynb
+stage: faultseg3d_pretrain
+dataset: faultseg3d
+model_variant: omniseis_segmentation
+loss_profile: faultseg3d_combined_sym
+augmentation_profile: faultseg3d_train
+trainer_profile: faultseg3d_pretrain
+data:
+  thebe_dir: data/thebe
+  faultseg3d_dir: data/faultseg3d
+  train_seis: data/thebe/thebe_train_seis.npz
+  train_fault: data/thebe/thebe_train_fault.npz
+  val_seis: data/thebe/thebe_val_seis.npz
+  val_fault: data/thebe/thebe_val_fault.npz
+  test_seis: data/thebe/thebe_test_seis.npz
+  test_fault: data/thebe/thebe_test_fault.npz
+  faultseg3d_train_seis_dir: data/faultseg3d/train/seis
+  faultseg3d_train_fault_dir: data/faultseg3d/train/fault
+  faultseg3d_val_seis_dir: data/faultseg3d/validation/seis
+  faultseg3d_val_fault_dir: data/faultseg3d/validation/fault
+  faultseg3d_shape: [128, 128, 128]
+  faultseg3d_dtype: float32
+checkpoints:
+  input: ""
+  segmentation_input: ""
+  sr_input: ""
+  output_dir: checkpoints/faultseg3d_omniseis_pretrain
+  best: checkpoints/faultseg3d_omniseis_pretrain/best_model.pth
+  latest: checkpoints/faultseg3d_omniseis_pretrain/latest_checkpoint.pth
+outputs:
+  output_dir: outputs/faultseg3d_omniseis_pretrain
+training:
+  roi_size: [128, 128, 128]
+  patch_size: [128, 128, 128]
+  batch_size: 1
+  learning_rate: 0.0001
+  max_epochs: 100
+  amp: true
+  accumulation_steps: 1
+  threshold: 0.5
+  overlap: 0.5
+  num_workers: 2
+  seed: 42
