@@ -32,19 +32,6 @@ preprocess = [
   "xarray",
   "zarr",
 ]
-server = [
-  "fastapi",
-  "uvicorn",
-  "pydantic",
-  "python-multipart",
-  "redis",
-  "celery",
-]
-ui = [
-  "streamlit",
-  "requests",
-  "pillow",
-]
 notebook = [
   "jupyter",
   "matplotlib",

@@ -22,15 +22,12 @@ API и YAML-конфигураций.
 
 ```text
 configs/                         общие и experiment-specific YAML
-docs/                            архитектура, данные, CLI и публикация
+docs/                            архитектура, данные и CLI
 notebooks/                       17 финальных Jupyter-ноутбуков
 scripts/validate_notebooks.py    локальный smoke-runner ноутбуков
 src/seismic_fault_recognition/   модели, датасеты, training и validation
 tests/                           unit и integration tests
 ```
-
-Рекомендуемый состав GitHub-публикации и точные команды подготовки индекса
-описаны в [docs/github_publication.md](docs/github_publication.md).
 
 ## Установка
 
